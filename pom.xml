@@ -1,0 +1,39 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>de.prauscher</groupId>
+  <artifactId>cli</artifactId>
+  <version>0.1.0</version>
+  <packaging>jar</packaging>
+
+  <name>Prauschers CLI</name>
+  <description>CLI using Javas reflection API</description>
+  <url>https://github.com/prauscher/java-cli</url>
+  
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/prauscher/java-cli</url>
+    <connection>scm:git:git://github.com/prauscher/java-cli.git</connection>
+    <developerConnection>scm:git:git@github.com:prauscher/java-cli.git</developerConnection>
+  </scm>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <developers>
+    <developer>
+      <email>prauscher@prauscher.de</email>
+      <name>Patrick Rauscher</name>
+      <url>https://github.com/prauscher</url>
+      <id>prauscher</id>
+    </developer>
+  </developers>
+</project>
