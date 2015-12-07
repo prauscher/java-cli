@@ -1,15 +1,46 @@
 package de.prauscher.cli;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import jline.console.*;
+import jline.console.history.FileHistory;
+
 public class CLI {
+
+	private final ConsoleReader reader;
+
+	{
+		ConsoleReader reader = null;
+
+		try {
+			jline.TerminalFactory.reset(); // necessary if the cli will be used within a project that will be executed within another project using jline, e.g. sbt
+			reader = new ConsoleReader();
+			reader.setBellEnabled(false);
+
+			try {
+				FileHistory history = new FileHistory(new File(".history").getCanonicalFile());
+				reader.setHistory(history);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		finally {
+			this.reader = reader;
+		}
+	}
+
 	/**
 	 * Print help of a given command and a list of arguments
 	 * @param command Command for which to print help
@@ -213,9 +244,15 @@ public class CLI {
 	 */
 	public void loop(String prompt) throws IOException {
 		String line;
-		do {
-			line = readLine(prompt);
-		} while (handleInput(line));
+		try {
+			do {
+				line = readLine(prompt);
+			} while (handleInput(line));
+		}
+		finally {
+			((FileHistory) reader.getHistory()).flush();
+			reader.shutdown();
+		}
 	}
 
 	/**
@@ -225,8 +262,7 @@ public class CLI {
 	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
 	 */
 	public String readLine(String prompt) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print(prompt);
-		return reader.readLine();
+		System.out.flush();
+		return this.reader.readLine("\n" + prompt).trim();
 	}
 }
