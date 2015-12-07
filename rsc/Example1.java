@@ -1,8 +1,10 @@
+import java.io.IOException;
+
 import de.prauscher.cli.CLI;
 import de.prauscher.cli.Command;
 import de.prauscher.cli.CommandArgument;
 
-public class ExampleCLI extends CLI {
+public class Example1 extends CLI {
     @Command(command="add", help="Add two numbers")
     public void add(@CommandArgument(help="summand 1") int a, @CommandArgument(help="summand 2") int b) {
         System.out.println("Result: " + (a + b));
@@ -19,8 +21,7 @@ public class ExampleCLI extends CLI {
     }
 
     public static void main(String[] args) throws IOException {
-        ExampleCLI cli = new ExampleCLI();
+        Example1 cli = new Example1();
         cli.loop();
-        cli.close();
     }
 }
