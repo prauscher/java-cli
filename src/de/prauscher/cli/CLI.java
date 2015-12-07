@@ -135,7 +135,10 @@ public class CLI {
 					}
 
 					return;
-				} catch (IllegalAccessException | IllegalArgumentException e) {
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					return;
+				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 					return;
 				}
