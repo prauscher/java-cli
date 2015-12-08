@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import jline.console.*;
+import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 
 public class CLI {
@@ -31,6 +31,8 @@ public class CLI {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
+			reader.addCompleter(new CommandCompleter(this));
 		}
 		catch (IOException e1) {
 			// TODO Auto-generated catch block
