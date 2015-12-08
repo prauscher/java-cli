@@ -12,7 +12,7 @@ import java.util.List;
 public class CLI {
 	/**
 	 * Print help of a given command and a list of arguments
-	 * @param command
+	 * @param command Command for which to print help
 	 */
 	@Command(command = "help", help = "print detailed help of a given command")
 	public void printHelp(@CommandArgument(help = "command for which help should be provided") String command) {
@@ -41,7 +41,7 @@ public class CLI {
 			System.out.println("Command " + command + " not found");
 		}
 	}
-	
+
 	/**
 	 * Print a list of all available commands
 	 */
@@ -59,8 +59,8 @@ public class CLI {
 
 	/**
 	 * (intelligent) cast of argument, considering primitives and enums
-	 * @param argument
-	 * @param type 
+	 * @param argument Input given on command line
+	 * @param type Target type to return
 	 * @return argument as provided class
 	 */
 	@SuppressWarnings("unchecked")
@@ -94,11 +94,11 @@ public class CLI {
 		}
 		return type.cast(argument);
 	}
-	
+
 	/**
-	 * Convert multiple 
-	 * @param args
-	 * @param types
+	 * Convert multiple arguments
+	 * @param args List of arguments as String
+	 * @param types Array of classes needed
 	 * @return Array of converted arguments
 	 */
 	private static Object[] convertArguments(List<String> args, Class<?>[] types) {
@@ -108,11 +108,11 @@ public class CLI {
 		}
 		return params;
 	}
-	
+
 	/**
 	 * Find correct command, convert Arguments as needed and execute handler
-	 * @param command
-	 * @param args
+	 * @param command Command given on command line
+	 * @param args List of arguments as String
 	 */
 	private void executeCommand(String command, List<String> args) {
 		for (Method m : this.getClass().getMethods()) {
@@ -146,10 +146,10 @@ public class CLI {
 		}
 		System.out.println("Unknown command or wrong parameter count");
 	}
-	
+
 	/**
 	 * Parse a single inputline
-	 * @param line
+	 * @param line Line entered after prompt
 	 * @return false iff command was "quit"
 	 */
 	private boolean handleInput(String line) {
@@ -157,9 +157,9 @@ public class CLI {
 		if (args.size() == 0)  {
 			return true;
 		}
-		
+
 		String command = args.remove(0);
-		
+
 		if (command.equalsIgnoreCase("quit")) {
 			return false;
 		} else {
@@ -170,7 +170,7 @@ public class CLI {
 
 	/**
 	 * split a string, considering arguments in quotes as single arguments
-	 * @param line
+	 * @param line String to split
 	 * @return List of single Strings
 	 */
 	private static ArrayList<String> tokenizeString(String line) {
@@ -196,10 +196,10 @@ public class CLI {
 		}
 		return args;
 	}
-	
+
 	/**
-	 * Start CLI-loop including printing the prompt, reading the input and passing parsed arguments to handlers until quit is given. Using default prompt "> "
-	 * @throws IOException
+	 * Start CLI-loop including printing the prompt, reading the input and passing parsed arguments to handlers until quit is given. Using default prompt "&gt; "
+	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
 	 */
 	public void loop() throws IOException {
 		loop("> ");
@@ -207,8 +207,8 @@ public class CLI {
 
 	/**
 	 * Start CLI-loop including printing the prompt, reading the input and passing parsed arguments to handlers until quit is given.
-	 * @param prompt the prompt to use (e.g. "> ")
-	 * @throws IOException
+	 * @param prompt the prompt to use (e.g. "&gt; ")
+	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
 	 */
 	public void loop(String prompt) throws IOException {
 		String line;
@@ -216,12 +216,12 @@ public class CLI {
 			line = readLine(prompt);
 		} while (handleInput(line));
 	}
-	
+
 	/**
 	 * Prompt for a single line-input
-	 * @param prompt
-	 * @return
-	 * @throws IOException
+	 * @param prompt the prompt to use (e.g. "&gt; ")
+	 * @return the raw line given by the user
+	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
 	 */
 	public String readLine(String prompt) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
