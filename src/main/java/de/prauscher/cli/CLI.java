@@ -185,6 +185,11 @@ public class CLI {
 	 * @return false iff command was "quit"
 	 */
 	private boolean handleInput(String line) {
+		if (line == null) {
+			return false;
+		}
+		line = line.trim();
+
 		ArrayList<String> args = tokenizeString(line);
 		if (args.size() == 0)  {
 			return true;
@@ -263,6 +268,6 @@ public class CLI {
 	 */
 	public String readLine(String prompt) throws IOException {
 		System.out.flush();
-		return this.reader.readLine("\n" + prompt).trim();
+		return this.reader.readLine("\n" + prompt);
 	}
 }
