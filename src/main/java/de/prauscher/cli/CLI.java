@@ -54,6 +54,7 @@ public class CLI {
 				System.out.printf("%15s %d - %s\n", cmd.command(), m.getParameterTypes().length, cmd.help());
 			}
 		}
+		System.out.printf("%15s %d - %s\n", "quit", 0, "quits the cli");
 		System.out.println("Choose wisely. Use help <command> if unsure!");
 	}
 
