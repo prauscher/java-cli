@@ -184,7 +184,7 @@ public class CLI {
 	/**
 	 * Parse a single inputline
 	 * @param line Line entered after prompt
-	 * @return false iff command was "quit"
+	 * @return false iff command was either "quit" or ^D
 	 */
 	private boolean handleInput(String line) {
 		if (line == null) {
@@ -238,7 +238,7 @@ public class CLI {
 
 	/**
 	 * Start CLI-loop including printing the prompt, reading the input and passing parsed arguments to handlers until quit is given. Using default prompt "&gt; "
-	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
+	 * @throws IOException If an I/O error occurs in ConsoleReader.readLine
 	 */
 	public void loop() throws IOException {
 		loop("> ");
@@ -247,7 +247,7 @@ public class CLI {
 	/**
 	 * Start CLI-loop including printing the prompt, reading the input and passing parsed arguments to handlers until quit is given.
 	 * @param prompt the prompt to use (e.g. "&gt; ")
-	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
+	 * @throws IOException If an I/O error occurs in ConsoleReader.readLine
 	 */
 	public void loop(String prompt) throws IOException {
 		String line;
@@ -266,7 +266,7 @@ public class CLI {
 	 * Prompt for a single line-input
 	 * @param prompt the prompt to use (e.g. "&gt; ")
 	 * @return the raw line given by the user
-	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
+	 * @throws IOException If an I/O error occurs in ConsoleReader.readLine
 	 */
 	public String readLine(String prompt) throws IOException {
 		System.out.flush();
