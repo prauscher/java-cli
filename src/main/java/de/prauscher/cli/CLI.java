@@ -1,15 +1,48 @@
 package de.prauscher.cli;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import jline.console.ConsoleReader;
+import jline.console.history.FileHistory;
+
 public class CLI {
+
+	private final ConsoleReader reader;
+
+	{
+		ConsoleReader reader = null;
+
+		try {
+			jline.TerminalFactory.reset(); // necessary if the cli will be used within a project that will be executed within another project using jline, e.g. sbt
+			reader = new ConsoleReader();
+			reader.setBellEnabled(false);
+
+			try {
+				FileHistory history = new FileHistory(new File(".history").getCanonicalFile());
+				reader.setHistory(history);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			reader.addCompleter(new CommandCompleter(this));
+		}
+		catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		finally {
+			this.reader = reader;
+		}
+	}
+
 	/**
 	 * Print help of a given command and a list of arguments
 	 * @param command Command for which to print help
@@ -162,9 +195,14 @@ public class CLI {
 	/**
 	 * Parse a single inputline
 	 * @param line Line entered after prompt
-	 * @return false iff command was "quit"
+	 * @return false iff command was either "quit" or ^D
 	 */
 	private boolean handleInput(String line) {
+		if (line == null) {
+			return false;
+		}
+		line = line.trim();
+
 		ArrayList<String> args = tokenizeString(line);
 		if (args.size() == 0)  {
 			return true;
@@ -210,7 +248,7 @@ public class CLI {
 
 	/**
 	 * Start CLI-loop including printing the prompt, reading the input and passing parsed arguments to handlers until quit is given. Using default prompt "&gt; "
-	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
+	 * @throws IOException If an I/O error occurs in ConsoleReader.readLine
 	 */
 	public void loop() throws IOException {
 		loop("> ");
@@ -219,24 +257,29 @@ public class CLI {
 	/**
 	 * Start CLI-loop including printing the prompt, reading the input and passing parsed arguments to handlers until quit is given.
 	 * @param prompt the prompt to use (e.g. "&gt; ")
-	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
+	 * @throws IOException If an I/O error occurs in ConsoleReader.readLine
 	 */
 	public void loop(String prompt) throws IOException {
 		String line;
-		do {
-			line = readLine(prompt);
-		} while (handleInput(line));
+		try {
+			do {
+				line = readLine(prompt);
+			} while (handleInput(line));
+		}
+		finally {
+			((FileHistory) reader.getHistory()).flush();
+			reader.shutdown();
+		}
 	}
 
 	/**
 	 * Prompt for a single line-input
 	 * @param prompt the prompt to use (e.g. "&gt; ")
 	 * @return the raw line given by the user
-	 * @throws IOException If an I/O error occurs in BufferedReader.readLine
+	 * @throws IOException If an I/O error occurs in ConsoleReader.readLine
 	 */
 	public String readLine(String prompt) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print(prompt);
-		return reader.readLine();
+		System.out.flush();
+		return this.reader.readLine("\n" + prompt);
 	}
 }
