@@ -59,6 +59,15 @@ public class CLI {
 	}
 
 	/**
+	 * Triggers shutdown of CLI by throwing a matching exception. Can be called safely only during command-handling
+	 * @throws CLIShutdownException always.
+	 **/
+	@Command(command = "quit", help = "quits the cli")
+	public void quit() throws CLIShutdownException {
+		throw new CLIShutdownException();
+	}
+
+	/**
 	 * (intelligent) cast of argument, considering primitives and enums
 	 * @param argument Input given on command line
 	 * @param type Target type to return
@@ -114,8 +123,9 @@ public class CLI {
 	 * Find correct command, convert Arguments as needed and execute handler
 	 * @param command Command given on command line
 	 * @param args List of arguments as String
+	 * @throws CLIShutdownException Iff the CLI should exit the loop()
 	 */
-	private void executeCommand(String command, List<String> args) {
+	private void executeCommand(String command, List<String> args) throws CLIShutdownException {
 		for (Method m : this.getClass().getMethods()) {
 			Command cmd = m.getAnnotation(Command.class);
 			if (cmd != null && cmd.command().equalsIgnoreCase(command) && args.size() == m.getParameterTypes().length) {
@@ -128,10 +138,11 @@ public class CLI {
 				} catch (InvocationTargetException e) {
 					Throwable cause = e.getCause();
 
-					if (cause instanceof CLIRuntimeException) {
+					if (cause instanceof CLIShutdownException) {
+						throw (CLIShutdownException) cause;
+					} else if (cause instanceof CLIRuntimeException) {
 						System.out.println("failed to execute command: " + cause.getMessage());
-					}
-					else {
+					} else {
 						cause.printStackTrace();
 					}
 
@@ -160,11 +171,10 @@ public class CLI {
 		}
 
 		String command = args.remove(0);
-
-		if (command.equalsIgnoreCase("quit")) {
-			return false;
-		} else {
+		try {
 			executeCommand(command, args);
+		} catch (CLIShutdownException e) {
+			return false;
 		}
 		return true;
 	}
