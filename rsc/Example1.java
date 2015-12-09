@@ -21,7 +21,6 @@ public class Example1 extends CLI {
     }
 
     public static void main(String[] args) throws IOException {
-        Example1 cli = new Example1();
-        cli.loop();
+        new Example1().loop();
     }
 }
